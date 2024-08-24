@@ -23,13 +23,15 @@ const SignUp = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const submit = () => {
-    if (!form.username || !form.email || !form.password)
-      Alert.alert("Error", "Please fill all the fields");
+  const submit = async () => {
+    if (form.username === "" || form.email === "" || form.password === "") {
+      Alert.alert("Error", "Please fill in all fields");
+    }
 
     setIsSubmitting(true);
     try {
-      const result = createUser(form.email, form.password, form.username);
+      const result = await createUser(form.email, form.password, form.username);
+
       router.replace("/home");
     } catch (error: any) {
       Alert.alert("Error", error.message);
