@@ -25,17 +25,16 @@ const SignIn = () => {
   const submit = async () => {
     if (form.email === "" || form.password === "") {
       Alert.alert("Error", "Please fill in all fields");
-    }
-
-    setIsSubmitting(true);
-    try {
-      signIn(form.email, form.password);
-
-      router.replace("/home");
-    } catch (error: any) {
-      Alert.alert("Error", error.message);
-    } finally {
-      setIsSubmitting(false);
+    } else {
+      setIsSubmitting(true);
+      try {
+        const result = await signIn(form.email, form.password);
+        router.replace("/home");
+      } catch (error: any) {
+        Alert.alert("Error", error.message);
+      } finally {
+        setIsSubmitting(false);
+      }
     }
   };
   return (

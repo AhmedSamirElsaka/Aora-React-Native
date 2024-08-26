@@ -1,10 +1,14 @@
 import CustomButton from "@/components/CustomButton";
 import { images } from "@/constants";
-import { Link, router } from "expo-router";
+import { useGlobalContext } from "@/context/GlobalProvider";
+import { Link, Redirect, router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { Image, SafeAreaView, ScrollView, Text, View } from "react-native";
 
 export default function Welcome() {
+  const { isLoading, isLoggedIn }: any = useGlobalContext();
+
+  if (!isLoading && isLoggedIn) return <Redirect href="/home" />;
   return (
     <SafeAreaView className="bg-primary h-full">
       {/* <Loader isLoading={loading} /> */}
