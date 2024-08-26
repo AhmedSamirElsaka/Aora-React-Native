@@ -23,19 +23,21 @@ const SignIn = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const submit = async () => {
-    if (form.email === "" || form.password === "") {
-      Alert.alert("Error", "Please fill in all fields");
-    } else {
-      setIsSubmitting(true);
-      try {
-        const result = await signIn(form.email, form.password);
-        router.replace("/home");
-      } catch (error: any) {
-        Alert.alert("Error", error.message);
-      } finally {
-        setIsSubmitting(false);
-      }
-    }
+    router.replace("/home");
+
+    // if (form.email === "" || form.password === "") {
+    //   Alert.alert("Error", "Please fill in all fields");
+    // } else {
+    //   setIsSubmitting(true);
+    //   try {
+    //     const result = await signIn(form.email, form.password);
+    //     router.replace("/home");
+    //   } catch (error: any) {
+    //     Alert.alert("Error", error.message);
+    //   } finally {
+    //     setIsSubmitting(false);
+    //   }
+    // }
   };
   return (
     <SafeAreaView className="bg-primary h-full">
