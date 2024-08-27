@@ -13,45 +13,35 @@ import { images } from "@/constants";
 import FormField from "@/components/FormField";
 import CustomButton from "@/components/CustomButton";
 import { Link, router } from "expo-router";
-import { createNewUserInDB, createUser, signIn } from "@/lib/appwrite";
+import { createUser } from "@/lib/appwrite";
+import { useGlobalContext } from "@/context/GlobalProvider";
 
 const SignUp = () => {
+  const { setUser, setIsLogged } = useGlobalContext();
+
+  const [isSubmitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({
     username: "",
     email: "",
     password: "",
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const submit = async () => {
     if (form.username === "" || form.email === "" || form.password === "") {
       Alert.alert("Error", "Please fill in all fields");
     }
 
-    setIsSubmitting(true);
+    setSubmitting(true);
     try {
-      const result = await createUser(form.email, form.password, form.username)
-        .then(async (result) => {
-          await signIn(form.email, form.password);
-          return result;
-        })
-        .then(async (result) => {
-          await createNewUserInDB(
-            form.email,
-            form.password,
-            // result.avatarUrl,
-            "",
-            result.$id,
-            form.username
-          );
-        });
+      const result = await createUser(form.email, form.password, form.username);
+      setUser(result);
+      setIsLogged(true);
 
       router.replace("/home");
     } catch (error: any) {
       Alert.alert("Error", error.message);
-      console.log("error");
     } finally {
-      setIsSubmitting(false);
+      setSubmitting(false);
     }
   };
   return (

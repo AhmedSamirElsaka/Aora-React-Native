@@ -7,16 +7,19 @@ export const useGlobalContext = () => useContext(GlobalContext);
 
 const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLogged, setIsLogged] = useState(false);
-  const [user, setUser] = useState<Document | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
+  console.log(isLoading, "isloadinff");
   useEffect(() => {
     getCurrentUser()
       .then((res) => {
         if (res) {
+          console.log(res, "global context");
           setIsLogged(true);
           setUser(res);
           // console.log(res);
+          setIsLoading(false);
         } else {
           setIsLogged(false);
           setUser(null);
@@ -26,7 +29,7 @@ const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
         console.log(error);
       })
       .finally(() => {
-        setLoading(false);
+        setIsLoading(false);
       });
   }, []);
 
@@ -37,7 +40,7 @@ const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
         setIsLogged,
         user,
         setUser,
-        loading,
+        isLoading,
       }}
     >
       {children}

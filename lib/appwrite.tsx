@@ -48,32 +48,24 @@ export async function createUser(
 
     const avatarUrl = avatars.getInitials(username);
 
-    return newAccount;
+    // await signIn(email, password);
+
+    const newUser = await databases.createDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.userCollectionId,
+      ID.unique(),
+      {
+        asccountId: newAccount.$id,
+        email: email,
+        username: username,
+        avatar: avatarUrl,
+      }
+    );
+
+    return newUser;
   } catch (error: any) {
     throw new Error(error);
   }
-}
-
-export async function createNewUserInDB(
-  email: string,
-  password: string,
-  avatarUrl: string,
-  id: string,
-  username: string
-) {
-  const newUser = await databases.createDocument(
-    appwriteConfig.databaseId,
-    appwriteConfig.userCollectionId,
-    ID.unique(),
-    {
-      accountId: id,
-      email: email,
-      username: username,
-      avatar: avatarUrl,
-    }
-  );
-
-  return newUser;
 }
 
 // Sign In
@@ -104,7 +96,7 @@ export async function getCurrentUser() {
     const currentAccount = await getAccount();
     if (!currentAccount) throw Error;
 
-    console.log(currentAccount, "currentAccount");
+    // console.log(currentAccount, "currentAccount");
 
     const currentUser = await databases.listDocuments(
       appwriteConfig.databaseId,
@@ -113,7 +105,7 @@ export async function getCurrentUser() {
 
     if (!currentUser) throw Error;
 
-    console.log(currentUser, "currentUser");
+    // console.log(currentUser, "currentUser");
     return currentUser.documents[0];
   } catch (error) {
     console.log(error);
@@ -228,7 +220,7 @@ export async function getUserPosts(userId: string) {
     const posts = await databases.listDocuments(
       appwriteConfig.databaseId,
       appwriteConfig.videosCollectionId,
-      [Query.equal("creator", userId)]
+      [Query.equal("users", userId)]
     );
 
     return posts.documents;
