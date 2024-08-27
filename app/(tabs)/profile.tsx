@@ -10,7 +10,7 @@ import { EmptyState, InfoBox, VideoCard } from "../../components";
 import { Post } from "./home";
 
 const Profile = () => {
-  const { user, setUser, setIsLogged } = useGlobalContext();
+  const { user, setUser, setIsLogged }: any = useGlobalContext();
   const { data: posts }: { data: Post[] } = useAppwrite(() =>
     getUserPosts(user.$id)
   );
@@ -73,7 +73,7 @@ const Profile = () => {
 
             <View className="mt-5 flex flex-row">
               <InfoBox
-                title={posts.length || 0}
+                title={posts.length.toString() || "0"}
                 subtitle="Posts"
                 titleStyles="text-xl"
                 containerStyles="mr-10"

@@ -6,7 +6,7 @@ import { icons } from "../constants";
 
 const VideoCard = ({ title, creator, avatar, thumbnail, video }: any) => {
   const [play, setPlay] = useState(false);
-
+  const [clicked, setClicked] = useState(false);
   return (
     <View className="flex flex-col items-center px-4 mb-14">
       <View className="flex flex-row gap-3 items-start">
@@ -35,8 +35,30 @@ const VideoCard = ({ title, creator, avatar, thumbnail, video }: any) => {
           </View>
         </View>
 
-        <View className="pt-2">
-          <Image source={icons.menu} className="w-5 h-5" resizeMode="contain" />
+        <View className="pt-2 items-end  z-10">
+          <TouchableOpacity onPress={() => setClicked(!clicked)}>
+            <Image
+              source={icons.menu}
+              className="w-5 h-5"
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+
+          {clicked ? (
+            <TouchableOpacity
+              className="flex-row bg-[#232533] p-4 rounded-md space-x-2 mt-2 -mb-12"
+              activeOpacity={0.7}
+            >
+              <Image
+                source={icons.bookmark}
+                className="w-5 h-5"
+                resizeMode="contain"
+              />
+              <Text className="text-white">save</Text>
+            </TouchableOpacity>
+          ) : (
+            ""
+          )}
         </View>
       </View>
 

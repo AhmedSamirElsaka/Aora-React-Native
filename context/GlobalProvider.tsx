@@ -7,7 +7,7 @@ export const useGlobalContext = () => useContext(GlobalContext);
 
 const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLogged, setIsLogged] = useState(false);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   console.log(isLoading, "isloadinff");
@@ -18,7 +18,6 @@ const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
           console.log(res, "global context");
           setIsLogged(true);
           setUser(res);
-          // console.log(res);
           setIsLoading(false);
         } else {
           setIsLogged(false);
