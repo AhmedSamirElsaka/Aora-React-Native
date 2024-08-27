@@ -48,24 +48,32 @@ export async function createUser(
 
     const avatarUrl = avatars.getInitials(username);
 
-    await signIn(email, password);
-
-    const newUser = await databases.createDocument(
-      appwriteConfig.databaseId,
-      appwriteConfig.userCollectionId,
-      ID.unique(),
-      {
-        accountId: newAccount.$id,
-        email: email,
-        username: username,
-        avatar: avatarUrl,
-      }
-    );
-
-    return newUser;
+    return newAccount;
   } catch (error: any) {
     throw new Error(error);
   }
+}
+
+export async function createNewUserInDB(
+  email: string,
+  password: string,
+  avatarUrl: string,
+  id: string,
+  username: string
+) {
+  const newUser = await databases.createDocument(
+    appwriteConfig.databaseId,
+    appwriteConfig.userCollectionId,
+    ID.unique(),
+    {
+      accountId: id,
+      email: email,
+      username: username,
+      avatar: avatarUrl,
+    }
+  );
+
+  return newUser;
 }
 
 // Sign In
@@ -96,17 +104,16 @@ export async function getCurrentUser() {
     const currentAccount = await getAccount();
     if (!currentAccount) throw Error;
 
-    console.log("test1");
-    console.log(currentAccount);
+    console.log(currentAccount, "currentAccount");
 
     const currentUser = await databases.listDocuments(
       appwriteConfig.databaseId,
       appwriteConfig.userCollectionId
     );
-    console.log("test2");
 
     if (!currentUser) throw Error;
 
+    console.log(currentUser, "currentUser");
     return currentUser.documents[0];
   } catch (error) {
     console.log(error);
@@ -248,16 +255,16 @@ export async function getAllPosts() {
 // }
 
 // Get latest created video posts
-// export async function getLatestPosts() {
-//   try {
-//     const posts = await databases.listDocuments(
-//       appwriteConfig.databaseId,
-//       appwriteConfig.videosCollectionId,
-//       [Query.orderDesc("$createdAt"), Query.limit(7)]
-//     );
+export async function getLatestPosts() {
+  try {
+    const posts = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.videosCollectionId,
+      [Query.orderDesc("$createdAt"), Query.limit(7)]
+    );
 
-//     return posts.documents;
-//   } catch (error: any) {
-//     throw new Error(error);
-//   }
-// }
+    return posts.documents;
+  } catch (error: any) {
+    throw new Error(error);
+  }
+}

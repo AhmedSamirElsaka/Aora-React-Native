@@ -13,7 +13,7 @@ import { images } from "@/constants";
 import FormField from "@/components/FormField";
 import CustomButton from "@/components/CustomButton";
 import { Link, router } from "expo-router";
-import { createUser } from "@/lib/appwrite";
+import { createNewUserInDB, createUser, signIn } from "@/lib/appwrite";
 
 const SignUp = () => {
   const [form, setForm] = useState({
@@ -30,7 +30,21 @@ const SignUp = () => {
 
     setIsSubmitting(true);
     try {
-      const result = await createUser(form.email, form.password, form.username);
+      const result = await createUser(form.email, form.password, form.username)
+        .then(async (result) => {
+          await signIn(form.email, form.password);
+          return result;
+        })
+        .then(async (result) => {
+          await createNewUserInDB(
+            form.email,
+            form.password,
+            // result.avatarUrl,
+            "",
+            result.$id,
+            form.username
+          );
+        });
 
       router.replace("/home");
     } catch (error: any) {

@@ -1,36 +1,58 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FlatList, Image, RefreshControl, Text, View } from "react-native";
 
 import { images } from "../../constants";
+import useAppwrite from "../../lib/useAppwrite";
+import { getAllPosts, getLatestPosts } from "../../lib/appwrite";
+import VideoCard from "@/components/VideoCard";
 import SearchInput from "@/components/SearchInput";
+import Trending from "@/components/Trending";
 import EmptyState from "@/components/EmptyState";
-import { getAllPosts } from "@/lib/appwrite";
-import useAppwrite from "@/lib/useAppwrite";
+
+interface Post {
+  $id: string;
+  title: string;
+  thumbnail: string;
+  video: string;
+  users: {
+    username: string;
+    avatar: string;
+  };
+}
 
 const Home = () => {
+  const { data: posts, refetch }: { data: Post[]; refetch: () => void } =
+    useAppwrite(getAllPosts);
+  const { data: latestPosts } = useAppwrite(getLatestPosts);
+
   const [refreshing, setRefreshing] = useState(false);
-  const { data: posts } = useAppwrite(getAllPosts);
+
   const onRefresh = async () => {
     setRefreshing(true);
-    // await refetch();
+    await refetch();
     setRefreshing(false);
   };
+
+  // one flatlist
+  // with list header
+  // and horizontal flatlist
+
+  //  we cannot do that with just scrollview as there's both horizontal and vertical scroll (two flat lists, within trending)
+
   return (
     <SafeAreaView className="bg-primary">
       <FlatList
-        // data={posts}
-        data={null}
+        data={posts}
         keyExtractor={(item) => item.$id}
         renderItem={({ item }) => (
-          // <VideoCard
-          //   title={item.title}
-          //   thumbnail={item.thumbnail}
-          //   video={item.video}
-          //   creator={item.creator.username}
-          //   avatar={item.creator.avatar}
-          // />
-          <View></View>
+          <VideoCard
+            title={item.title}
+            thumbnail={item.thumbnail}
+            video={item.video}
+            creator={item.users.username}
+            avatar={item.users.avatar}
+          />
         )}
         ListHeaderComponent={() => (
           <View className="flex my-6 px-4 space-y-6">
@@ -60,7 +82,7 @@ const Home = () => {
                 Latest Videos
               </Text>
 
-              {/* <Trending posts={latestPosts ?? []} /> */}
+              <Trending posts={latestPosts ?? []} />
             </View>
           </View>
         )}
