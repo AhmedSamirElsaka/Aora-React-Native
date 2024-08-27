@@ -10,7 +10,7 @@ import SearchInput from "@/components/SearchInput";
 import Trending from "@/components/Trending";
 import EmptyState from "@/components/EmptyState";
 
-interface Post {
+export interface Post {
   $id: string;
   title: string;
   thumbnail: string;
