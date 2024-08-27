@@ -223,19 +223,19 @@ export async function getAllPosts() {
 }
 
 // Get video posts created by user
-// export async function getUserPosts(userId) {
-//   try {
-//     const posts = await databases.listDocuments(
-//       appwriteConfig.databaseId,
-//       appwriteConfig.videosCollectionId,
-//       [Query.equal("creator", userId)]
-//     );
+export async function getUserPosts(userId: string) {
+  try {
+    const posts = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.videosCollectionId,
+      [Query.equal("creator", userId)]
+    );
 
-//     return posts.documents;
-//   } catch (error: any) {
-//     throw new Error(error);
-//   }
-// }
+    return posts.documents;
+  } catch (error: any) {
+    throw new Error(error);
+  }
+}
 
 // Get video posts that matches search query
 export async function searchPosts(query: string) {
