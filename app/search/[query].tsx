@@ -9,12 +9,14 @@ import { Post } from "../(tabs)/home";
 import VideoCard from "@/components/VideoCard";
 import SearchInput from "@/components/SearchInput";
 import EmptyState from "@/components/EmptyState";
+import { useGlobalContext } from "@/context/GlobalProvider";
 
 const Search = () => {
   const { query }: { query: string } = useLocalSearchParams();
   const { data: posts, refetch }: { data: Post[]; refetch: () => void } =
     useAppwrite(() => searchPosts(query));
 
+  const { user }: any = useGlobalContext();
   useEffect(() => {
     refetch();
   }, [query]);
@@ -29,8 +31,10 @@ const Search = () => {
             title={item.title}
             thumbnail={item.thumbnail}
             video={item.video}
-            creator={item.users.username}
-            avatar={item.users.avatar}
+            creator={"item.users.username"}
+            avatar={user.avatar}
+            allowSave={true}
+            prompt={item.prompt}
           />
         )}
         ListHeaderComponent={() => (

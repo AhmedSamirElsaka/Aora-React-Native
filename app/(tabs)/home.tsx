@@ -9,6 +9,7 @@ import VideoCard from "@/components/VideoCard";
 import SearchInput from "@/components/SearchInput";
 import Trending from "@/components/Trending";
 import EmptyState from "@/components/EmptyState";
+import { useGlobalContext } from "@/context/GlobalProvider";
 
 export interface Post {
   $id: string;
@@ -19,6 +20,7 @@ export interface Post {
     username: string;
     avatar: string;
   };
+  prompt: string;
 }
 
 const Home = () => {
@@ -27,7 +29,9 @@ const Home = () => {
   const { data: latestPosts } = useAppwrite(getLatestPosts);
 
   const [refreshing, setRefreshing] = useState(false);
+  const { user }: any = useGlobalContext();
 
+  console.log(user, "user");
   const onRefresh = async () => {
     setRefreshing(true);
     await refetch();
@@ -50,8 +54,10 @@ const Home = () => {
             title={item.title}
             thumbnail={item.thumbnail}
             video={item.video}
-            creator={item.users.username}
-            avatar={item.users.avatar}
+            creator={"item.users.username"}
+            avatar={user.avatar}
+            allowSave={true}
+            prompt={item.prompt}
           />
         )}
         ListHeaderComponent={() => (
@@ -62,7 +68,7 @@ const Home = () => {
                   Welcome Back
                 </Text>
                 <Text className="text-2xl font-psemibold text-white">
-                  JSMastery
+                  {user.username}
                 </Text>
               </View>
 

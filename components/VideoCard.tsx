@@ -1,12 +1,53 @@
 import { useState } from "react";
 import { ResizeMode, Video } from "expo-av";
-import { View, Text, TouchableOpacity, Image } from "react-native";
+import { View, Text, TouchableOpacity, Image, Alert } from "react-native";
 
 import { icons } from "../constants";
+import { createVideoPost, SaveVideoToUser } from "@/lib/appwrite";
+import { useGlobalContext } from "@/context/GlobalProvider";
 
-const VideoCard = ({ title, creator, avatar, thumbnail, video }: any) => {
+const VideoCard = ({
+  title,
+  creator,
+  avatar,
+  thumbnail,
+  video,
+  allowSave,
+  prompt,
+}: any) => {
   const [play, setPlay] = useState(false);
   const [clicked, setClicked] = useState(false);
+  const { user }: any = useGlobalContext();
+
+  const [form, setForm] = useState({
+    title,
+    videoUrl: video,
+    thumbnailUrl: thumbnail,
+    prompt,
+  });
+
+  const addVideoToBookmark = async () => {
+    if (
+      form.prompt === "" ||
+      form.title === "" ||
+      !form.thumbnailUrl ||
+      !form.videoUrl ||
+      !form.prompt
+    ) {
+      return Alert.alert("Please provide all fields");
+    }
+
+    try {
+      await SaveVideoToUser({
+        ...form,
+        userId: user.asccountId,
+      });
+
+      Alert.alert("Success", "Post uploaded successfully");
+    } catch (error: any) {
+      Alert.alert("Error", error.message);
+    }
+  };
   return (
     <View className="flex flex-col items-center px-4 mb-14">
       <View className="flex flex-row gap-3 items-start">
@@ -44,10 +85,11 @@ const VideoCard = ({ title, creator, avatar, thumbnail, video }: any) => {
             />
           </TouchableOpacity>
 
-          {clicked ? (
+          {allowSave && clicked ? (
             <TouchableOpacity
               className="flex-row bg-[#232533] p-4 rounded-md space-x-2 mt-2 -mb-12"
               activeOpacity={0.7}
+              onPress={addVideoToBookmark}
             >
               <Image
                 source={icons.bookmark}

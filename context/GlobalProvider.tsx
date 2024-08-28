@@ -10,14 +10,14 @@ const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  console.log(isLoading, "isloadinff");
   useEffect(() => {
     getCurrentUser()
       .then((res) => {
         if (res) {
-          console.log(res, "global context");
           setIsLogged(true);
           setUser(res);
+
+          console.log(res, "res");
           setIsLoading(false);
         } else {
           setIsLogged(false);

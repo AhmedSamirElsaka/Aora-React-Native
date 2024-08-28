@@ -8,8 +8,6 @@ import { Image, SafeAreaView, ScrollView, Text, View } from "react-native";
 export default function Welcome() {
   const { isLoading, isLogged } = useGlobalContext();
 
-  console.log(isLoading, isLogged);
-
   if (!isLoading && isLogged) return <Redirect href="/home" />;
   return (
     <SafeAreaView className="bg-primary h-full">

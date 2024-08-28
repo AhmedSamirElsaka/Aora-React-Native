@@ -47,10 +47,14 @@ export async function createUser(
 
     if (!newAccount) throw Error;
 
+    // console.log(newAccount, "newAccount");
     const avatarUrl = avatars.getInitials(username);
 
-    // await signIn(email, password);
-
+    try {
+      const session = await account.createEmailPasswordSession(email, password);
+    } catch (error: any) {
+      throw new Error(error);
+    }
     const newUser = await databases.createDocument(
       appwriteConfig.databaseId,
       appwriteConfig.userCollectionId,
@@ -63,6 +67,7 @@ export async function createUser(
       }
     );
 
+    // console.log(newUser, "newUser");
     return newUser;
   } catch (error: any) {
     throw new Error(error);
@@ -97,11 +102,10 @@ export async function getCurrentUser() {
     const currentAccount = await getAccount();
     if (!currentAccount) throw Error;
 
-    // console.log(currentAccount, "currentAccount");
-
     const currentUser = await databases.listDocuments(
       appwriteConfig.databaseId,
-      appwriteConfig.userCollectionId
+      appwriteConfig.userCollectionId,
+      [Query.equal("asccountId", currentAccount.$id)]
     );
 
     if (!currentUser) throw Error;
@@ -259,5 +263,73 @@ export async function getLatestPosts() {
     return posts.documents;
   } catch (error: any) {
     throw new Error(error);
+  }
+}
+
+export async function SaveVideoToUser(form: any) {
+  try {
+    // Fetch the user document based on the userId
+    const userDocuments = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.userCollectionId,
+      [Query.equal("asccountId", form.userId)]
+    );
+
+    if (userDocuments.total === 0) {
+      throw new Error("User not found");
+    }
+
+    const userDocument = userDocuments.documents[0];
+    const userSavedVideos = userDocument.videos || [];
+
+    // Update the user document with the new video
+    const updatedVideos = [
+      ...userSavedVideos,
+      {
+        title: form.title,
+        thumbnail: form.thumbnailUrl,
+        prompt: form.prompt,
+        video: form.videoUrl,
+        // creator: form.userId,
+      },
+    ];
+
+    const updatedUser = await databases.updateDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.userCollectionId,
+      userDocument.$id,
+      {
+        videos: updatedVideos,
+      }
+    );
+
+    console.log(updatedUser, "Video added successfully");
+    return updatedUser;
+  } catch (error: any) {
+    console.error("Failed to save video to user", error);
+    throw new Error(error.message || "Failed to save video");
+  }
+}
+
+export async function getUserSavedVideos(userId: string) {
+  try {
+    // Fetch the user document based on the userId
+    const userDocuments = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.userCollectionId,
+      [Query.equal("asccountId", userId)]
+    );
+
+    if (userDocuments.total === 0) {
+      throw new Error("User not found");
+    }
+
+    const userDocument = userDocuments.documents[0];
+    const userSavedVideos = userDocument.videos || [];
+
+    return userSavedVideos;
+  } catch (error: any) {
+    console.error("Failed to get saved videos for user", error);
+    throw new Error(error.message || "Failed to get saved videos");
   }
 }
