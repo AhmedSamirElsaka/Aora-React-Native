@@ -28,7 +28,7 @@ const zoomOut = {
   },
 };
 
-const TrendingItem = ({ activeItem, item }) => {
+const TrendingItem = ({ activeItem, item }: any) => {
   const [play, setPlay] = useState(false);
   const video = useRef<Video>(null);
 

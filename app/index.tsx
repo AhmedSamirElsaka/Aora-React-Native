@@ -6,7 +6,7 @@ import { StatusBar } from "expo-status-bar";
 import { Image, SafeAreaView, ScrollView, Text, View } from "react-native";
 
 export default function Welcome() {
-  const { isLoading, isLogged } = useGlobalContext();
+  const { isLoading, isLogged }: any = useGlobalContext();
 
   if (!isLoading && isLogged) return <Redirect href="/home" />;
   return (
